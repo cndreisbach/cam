@@ -14,8 +14,9 @@ import (
 	"hawx.me/code/img/blend"
 )
 
-const width = 1800
-const height = 1200
+var widthInt int
+var heightInt int
+var scaleInt int
 
 func hslToRgb(h, s, l float64) (r, g, b uint8) {
 	if s == 0 {
@@ -78,103 +79,22 @@ func pushToEdges(value float64, pad float64) float64 {
 	}
 }
 
-// func createImg1(nz1, nz2, nz3 opensimplex.Noise) image.Image {
-// 	initialHue := rand.Float64() * 360
-
-// 	// Create a new image
-// 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-
-// 	// Set color for each pixel
-// 	for y := 0; y < height; y++ {
-// 		for x := 0; x < width; x++ {
-// 			// Get noise value
-// 			h := (initialHue + 40*nz3.Eval2(float64(x+x)/scale, float64(y)/scale))
-// 			if h > 360 {
-// 				h -= 360
-// 			}
-// 			s := nz1.Eval2(float64(x)/scale, float64(y)/scale)
-// 			s = s*s*s*s + 0.75
-// 			l := nz2.Eval2(float64(x-y)/scale, float64(y)/scale)
-// 			l = l*0.25 + 0.5
-// 			r, g, b := hslToRgb(h, s, l)
-// 			img.Set(x, y, color.RGBA{r, g, b, 255})
-// 		}
-// 	}
-
-// 	return img
-// }
-
-// func createImg2(nz1, nz2, nz3 opensimplex.Noise) image.Image {
-// 	initialHue := rand.Float64() * 360
-// 	lx := rand.Float64()*2 - 1
-// 	ly := rand.Float64()*2 - 1
-
-// 	// Create a new image
-// 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-
-// 	// Set color for each pixel
-// 	for y := 0; y < height; y++ {
-// 		for x := 0; x < width; x++ {
-// 			// Get noise value
-// 			h := (initialHue + 40*nz3.Eval2(float64(x+x)/scale, float64(y)/scale))
-// 			if h > 360 {
-// 				h -= 360
-// 			}
-// 			s := nz1.Eval2(float64(x)/scale, float64(y)/scale)
-// 			// s = constrain0to1(s*s*s*s + 0.75)
-// 			s = s*s*s*s + 0.75
-// 			l := nz2.Eval2((lx*float64(x)+ly*float64(y))/scale, float64(y)/scale)
-// 			l = pushToEdges(l, 0.05)
-// 			r, g, b := hslToRgb(h, s, l)
-// 			img.Set(x, y, color.RGBA{r, g, b, 255})
-// 		}
-// 	}
-
-// 	return img
-// }
-
-// func createImg3(nz1, nz2, nz3 opensimplex.Noise) image.Image {
-// 	initialHue := rand.Float64() * 360
-// 	lx := rand.Float64()*4 - 2
-// 	ly := rand.Float64()*4 - 2
-
-// 	// Create a new image
-// 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-
-// 	// Set color for each pixel
-// 	for y := 0; y < height; y++ {
-// 		for x := 0; x < width; x++ {
-// 			// Get noise value
-// 			h := (initialHue + 40*nz3.Eval2(float64(x+x)/scale, float64(y)/scale))
-// 			if h > 360 {
-// 				h -= 360
-// 			}
-// 			s := nz1.Eval2(float64(x)/scale, float64(y)/scale)
-// 			s = pushToEdges(s, 0.2)
-// 			l := nz2.Eval2((lx*float64(x)+ly*float64(y))/scale, float64(y)/scale)
-// 			l = constrain0to1(l * 2)
-// 			r, g, b := hslToRgb(h, s, l)
-// 			img.Set(x, y, color.RGBA{r, g, b, 255})
-// 		}
-// 	}
-
-// 	return img
-// }
-
 func createImg(nz1, nz2, nz3 opensimplex.Noise) image.Image {
 	// Large scale makes the noise more smooth
-	scale := float64(500)
+	height := float64(heightInt)
+	width := float64(widthInt)
+	scale := float64(scaleInt)
 	hueRange := float64(150)
 	initialHue := rand.Float64() * 360
 	lx := rand.Float64()*3 - 1.5
 	ly := rand.Float64()*3 - 1.5
 
 	// Create a new image
-	img1 := image.NewRGBA(image.Rect(0, 0, width, height))
+	img1 := image.NewRGBA(image.Rect(0, 0, widthInt, heightInt))
 
 	// Set color for each pixel
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
+	for y := 0; y < heightInt; y++ {
+		for x := 0; x < widthInt; x++ {
 			// Get noise value
 			h := (initialHue + hueRange*nz3.Eval2(float64(x)/scale, float64(y)/scale) - (hueRange / 20))
 			if h > 360 {
@@ -182,7 +102,7 @@ func createImg(nz1, nz2, nz3 opensimplex.Noise) image.Image {
 			} else if h < 0 {
 				h += 360
 			}
-			// s := 0.5
+
 			s := nz1.Eval2((lx*float64(x)+ly*float64(y))/scale, float64(y)/scale)
 			s = 0.5 + s*0.5
 
@@ -194,7 +114,7 @@ func createImg(nz1, nz2, nz3 opensimplex.Noise) image.Image {
 	}
 
 	// Create a new image
-	img2 := image.NewRGBA(image.Rect(0, 0, width, height))
+	img2 := image.NewRGBA(image.Rect(0, 0, widthInt, heightInt))
 
 	// Set a new initial hue
 	initialHue = rand.Float64() * 360
@@ -202,13 +122,10 @@ func createImg(nz1, nz2, nz3 opensimplex.Noise) image.Image {
 	// eff with x and y
 	xOffset := int(math.Floor(rand.Float64()*width - width/2))
 	yOffset := int(math.Floor(rand.Float64()*height - height/2))
-	fmt.Printf("xOffset: %d, yOffset: %d\n", xOffset, yOffset)
-	// xOffset := 200
-	// yOffset := 200
 
 	// Set color for each pixel
-	for y := yOffset; y < height+yOffset; y++ {
-		for x := xOffset; x < width+xOffset; x++ {
+	for y := yOffset; y < heightInt+yOffset; y++ {
+		for x := xOffset; x < widthInt+xOffset; x++ {
 			// We want a sort of moving echo effect
 			// Keep on x axis
 			echo := nz3.Eval2(float64(x)/scale, float64(x)/scale)*(width/10) - (width / 20)
@@ -228,14 +145,7 @@ func createImg(nz1, nz2, nz3 opensimplex.Noise) image.Image {
 			l := nz2.Eval2((lx*float64(x)+ly*float64(y)+echo)/scale, float64(y)/scale)
 			l = pushToEdges(l, 0)
 			r, g, b := hslToRgb(h, s, l)
-			// x = x % width
-			// if x < 0 {
-			// 	x = width + x
-			// }
-			// y = y % height
-			// if y < 0 {
-			// 	y = height + y
-			// }
+
 			img2.Set(x, y, color.RGBA{r, g, b, 255})
 		}
 	}
@@ -273,5 +183,8 @@ var genImgCmd = &cobra.Command{
 }
 
 func init() {
+	genImgCmd.Flags().IntVar(&widthInt, "width", 1800, "Width of the image")
+	genImgCmd.Flags().IntVar(&heightInt, "height", 1200, "Height of the image")
+	genImgCmd.Flags().IntVar(&scaleInt, "scale", 500, "Scale of the noise, higher is smoother")
 	rootCmd.AddCommand(genImgCmd)
 }

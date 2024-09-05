@@ -10,9 +10,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "cam",
 	Short: "cam is cndreisbach's awesome manager",
-	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-	},
 }
 
 func Execute() {
